@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: altbank
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - altbank-network
+
+  altbank-app:
+    build:
+      context: .
+      dockerfile: src/main/docker/Dockerfile.jvm
+    container_name: altbank-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      QUARKUS_DATASOURCE_USERNAME: root
+      QUARKUS_DATASOURCE_PASSWORD: rootpassword
+      QUARKUS_DATASOURCE_URL: jdbc:mysql://mysql:3306/altbank
+    networks:
+      - altbank-network
+
+volumes:
+  mysql-data:
+
+networks:
+  altbank-network:
+    driver: bridge
