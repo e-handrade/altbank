@@ -18,7 +18,7 @@ String apiKey;
     public void testUnauthorizedAccess() {
         RestAssured.given()
                 .when()
-                .get("/hello")
+                .get("/webhooks/hello")
                 .then()
                 .statusCode(401);
     }
@@ -29,7 +29,7 @@ String apiKey;
         RestAssured.given()
                 .header("X-API-KEY", apiKey)
                 .when()
-                .get("/hello")
+                .get("/webhooks/hello")
                 .then()
                 .statusCode(200);
     }

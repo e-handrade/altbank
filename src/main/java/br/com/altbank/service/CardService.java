@@ -51,10 +51,15 @@ public class CardService {
         //somente desbloqueia o cartão se estiver entregue
         Optional.of(card)
                 .filter(c -> c.getDeliveryStatus() == DeliveryStatus.DELIVERED)
-                .ifPresent(c -> {
-                    c.setStatus(CardStatus.ACTIVE);
-                    cardRepository.update(c);
-                });
+                .ifPresentOrElse(
+                        c -> {
+                            c.setStatus(CardStatus.ACTIVE);
+                            cardRepository.update(c);
+                        },
+                        () -> {
+                            throw new IllegalArgumentException("Unlocking card is not authorized. Delivery status: " + card.getDeliveryStatus());
+                        }
+                );
 
     }
 }

@@ -5,8 +5,8 @@ import lombok.Data;
 import java.time.LocalDateTime;
 @Data
 public class CvvWebhookDTO {
-    private String accountId;
-    private String cardId;
-    private Integer nextCvv;
+    private Long accountId;
+    private Long cardId;
+    private int nextCvv;
     private LocalDateTime expirationDate;
 }

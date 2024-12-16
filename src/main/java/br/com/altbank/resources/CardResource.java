@@ -42,8 +42,14 @@ public class CardResource {
     @PUT
     @Path("/unblock/{id}")
     public Response unblockCard(@PathParam("id") Long id) {
-        cardService.unblockCard(id);
-        return Response.status(Response.Status.OK).build();
+
+        try {
+            cardService.unblockCard(id);
+            return Response.status(Response.Status.OK).build();
+        } catch (IllegalArgumentException iae) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
     }
 
 }
