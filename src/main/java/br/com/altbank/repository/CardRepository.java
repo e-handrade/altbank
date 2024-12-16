@@ -5,6 +5,7 @@ import br.com.altbank.entity.CardReissueRequest;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 
 import java.util.Optional;
 
@@ -13,11 +14,13 @@ public class CardRepository {
     @Inject
     EntityManager entityManager;
 
+    @Transactional
     public Card save(Card card) {
         entityManager.persist(card);
         return card;
     }
 
+    @Transactional
     public void update(Card card) {
         entityManager.merge(card);
     }
@@ -28,15 +31,16 @@ public class CardRepository {
 
     public Optional<Card> findPhysicalCardActiveByDocumentCustomer(String document) {
         return entityManager.createQuery(
-                        "SELECT c FROM Card c " +
-                                "JOIN Account a ON c.accountId = a.id " +
-                                "JOIN Customer cu ON a.customerId = cu.id " +
-                                "WHERE cu.document = :document AND c.cardType = 'PHYSICAL' AND c.status = 'ACTIVE'", Card.class)
+                "SELECT c FROM Card c " +
+                        "JOIN c.account a " +
+                        "JOIN a.customer cu " +
+                        "WHERE cu.document = :document AND c.cardType = 'PHYSICAL' AND c.status = 'ACTIVE'", Card.class)
                 .setParameter("document", document)
                 .getResultStream()
                 .findFirst();
     }
 
+    @Transactional
     public void saveCardReissueRequest(CardReissueRequest request) {
         entityManager.persist(request);
     }

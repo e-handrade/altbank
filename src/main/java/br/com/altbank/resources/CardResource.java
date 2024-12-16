@@ -20,21 +20,30 @@ public class CardResource {
 
     @POST
     public Response createPhysicalCard(CardDTO cardDTO) {
+        System.out.println("====================== CHEGUEI =====================================");
         Card card = cardService.createPhysicalCard(cardDTO);
         return Response.status(Response.Status.CREATED).entity(card).build();
     }
 
     @POST
-    @Path("/{id}/reissue")
+    @Path("/reissue/{id}")
     public Response reissueCard(@PathParam("id") Long id, ReissueCardDTO reissueCardDTO) {
         cardService.reissueCard(id, reissueCardDTO);
         return Response.ok().build();
     }
 
     @POST
-    @Path("/{id}/virtual")
+    @Path("/virtual/{document}")
     public Response createVirtualCard(@PathParam("document") String document) {
         Card card = cardService.createVirtualCard(document);
         return Response.status(Response.Status.CREATED).entity(card).build();
     }
+
+    @PUT
+    @Path("/unblock/{id}")
+    public Response unblockCard(@PathParam("id") Long id) {
+        cardService.unblockCard(id);
+        return Response.status(Response.Status.OK).build();
+    }
+
 }

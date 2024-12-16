@@ -14,6 +14,7 @@ public class CustomerRepository{
     @Inject
     EntityManager entityManager;
 
+    @Transactional
     public Customer save(Customer customer) {
         entityManager.persist(customer);
         return customer;

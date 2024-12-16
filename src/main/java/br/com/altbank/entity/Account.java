@@ -16,10 +16,11 @@ import java.time.LocalDateTime;
 public class Account {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "customerId", nullable = false)
     private Customer customer;
 
     @Column(nullable = false, precision = 10, scale = 2)
@@ -29,12 +30,18 @@ public class Account {
     @Column(name = "status", nullable = false)
     private AccountStatus status;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     public Account(Customer customer, BigDecimal balance) {
         this.customer = customer;
         this.balance = balance;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.status = AccountStatus.ACTIVE;
     }
 }
 

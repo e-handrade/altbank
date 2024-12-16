@@ -1,85 +1,83 @@
-# altbank
+# Bank
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Use case
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+Uma das estruturas mais básicas para um cartão de crédito é a parte de conta e cartões.
+Imagine que toda vez que alguém abre uma conta no alt.bank nós precisamos criar uma
+conta para esse novo Customer com base em seus dados cadastrais e também
+disponibilizar um cartão de crédito físico e virtual para o novo cliente.
+O cartão de crédito físico deve ser enviado por nós via transportadora para o cliente com
+base no seu endereço. Somente após a chegada do cartão físico, e sua devida validação, é
+que o cliente pode solicitar um cartão virtual.
+É muito importante que a nossa base de dados seja o mais concisa possível, siga bons
+padrões de normalização de dados e seja livre de problemas como dados duplicados.
 
-## Running the application in dev mode
+Requisitos básicos do caso de uso
 
-You can run your application in dev mode that enables live coding using:
+● Criação da estrutura necessária para o funcionamento do caso de uso;
 
-```shell script
-./mvnw quarkus:dev
-```
+● Deve ser possível:
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+	○ Solicitar a reemissão de um cartão físico (com um motivo para isso, como
+		perda ou roubo, por exemplo);
+	○ Solicitar o cancelamento da conta.
 
-## Packaging and running the application
+● Nós precisamos ter 2 webhooks:
+	○ Resposta da transportadora sobre a entrega do cartão: Quando o cartão
+		é entregue, nós precisamos receber o webhook para ter certeza de que a
+		validação do usuário realmente deve ocorrer.
 
-The application can be packaged using:
+■ JSON esperado da transportadora:
 
-```shell script
-./mvnw package
-```
+{
+   "tracking_id" : "tracking id do cartão",
+   "delivery_status" : "status da entrega",
+   "delivery_date" : "local date time",
+   "delivery_return_reason" : "status about any delivery problem",
+   "delivery_address" : "delivery address"
+}
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+○ Mudança automática do CVV: O número do CVV do cartão virtual deve
+mudar periodicamente para evitarmos fraudes. Essa informação é gerada
+pela processadora de cartões.
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+■ JSON esperado da processadora:
 
-If you want to build an _über-jar_, execute the following command:
+Unset
+{
+   "account_id" : "processor account id",
+   "card_id" : "processor card id",
+   "next_cvv" : 123,
+   "expiration_date" : "local date time"
+}
 
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
+Requisitos técnicos
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+● O mapeamento de entidades na API deve ser feito utilizando Hibernate;
 
-## Creating a native executable
+● É necessário criar testes unitários para ao menos uma parte das funcionalidades;
 
-You can create a native executable using:
+● Os Webhooks devem possuir uma API KEY (enviada via header) para cada empresa
+a fim de evitar que o endpoint do webhook seja chamado por outro recurso de modo
+indevido;
 
-```shell script
-./mvnw package -Dnative
-```
+## Swagger
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+http://localhost:8080/q/swagger-ui/
 
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
+## Jacoco
 
-You can then execute your native executable with: `./target/altbank-1.0.0-SNAPSHOT-runner`
+http://localhost:63342/altbank/target/site/jacoco/index.html
 
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
+## GitHub
 
-## Related Guides
+https://github.com/e-handrade/altbank
 
-- Hibernate ORM ([guide](https://quarkus.io/guides/hibernate-orm)): Define your persistent model with Hibernate ORM and Jakarta Persistence
-- JDBC Driver - MySQL ([guide](https://quarkus.io/guides/datasource)): Connect to the MySQL database via JDBC
-- SmallRye JWT ([guide](https://quarkus.io/guides/security-jwt)): Secure your applications with JSON Web Token
-- SmallRye OpenAPI ([guide](https://quarkus.io/guides/openapi-swaggerui)): Document your REST APIs with OpenAPI - comes with Swagger UI
-- REST Client ([guide](https://quarkus.io/guides/rest-client)): Call REST services
-- RESTEasy Reactive ([guide](https://quarkus.io/guides/resteasy-reactive)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
+## Iniciando o projeto
 
-## Provided Code
-
-### Hibernate ORM
-
-Create your first JPA entity
-
-[Related guide section...](https://quarkus.io/guides/hibernate-orm)
-
+1 -  
+2 - 
+3 - 
+4 -  
 
 
-### REST Client
-
-Invoke different services through REST with JSON
-
-[Related guide section...](https://quarkus.io/guides/rest-client)
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)

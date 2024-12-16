@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class Customer{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -22,17 +23,22 @@ public class Customer{
     @Column(nullable = false)
     private String document;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "delivery_address_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "deliveryAddressId")
     private Address deliveryAddress;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "createdAt", updatable = false)
     private LocalDateTime createdAt;
 
     public Customer(String name, String document, Address deliveryAddress) {
         this.name = name;
         this.document = document;
         this.deliveryAddress = deliveryAddress;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
     }
 }
 

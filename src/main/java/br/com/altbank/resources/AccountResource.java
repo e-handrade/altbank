@@ -24,10 +24,10 @@ public class AccountResource {
     }
 
     @PUT
-    @Path("/{id}/cancel")
+    @Path("/cancel/{document}")
     public Response cancelAccount(@PathParam("document") String document) {
         accountService.cancelAccount(document);
-        return Response.noContent().build();
+        return Response.status(Response.Status.OK).entity(document).build();
     }
 
 }

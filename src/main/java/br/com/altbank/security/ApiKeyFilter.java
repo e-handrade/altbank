@@ -14,16 +14,12 @@ import java.io.IOException;
 @RequiresApiKey
 public class ApiKeyFilter implements ContainerRequestFilter {
 
-    //String apiKey = System.getenv("X_API_KEY");
-    String apiKey = ConfigLoader.getEnv("altbank.api.key");
-
+    @ConfigProperty(name = "altbank.api.key")
+    String apiKey;
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
 
         String headerApiKey = containerRequestContext.getHeaderString("X-API-KEY");
-
-        System.out.println("API Key recebida: " + apiKey);
-        System.out.println("API Key esperada: " + headerApiKey);
 
         if (headerApiKey == null || !headerApiKey.equals(apiKey)) {
             containerRequestContext.abortWith(Response

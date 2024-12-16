@@ -5,7 +5,6 @@ import br.com.altbank.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Random;
 
@@ -18,36 +17,37 @@ import java.util.Random;
 public class Card {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id", nullable = false)
+    @JoinColumn(name = "accountId", nullable = false)
     private Account account;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private CardType type;
+    private CardType cardType;
 
     @Column(nullable = false, unique = true)
-    private Long number = cardNumberGenerator();
+    private Long number;
 
     @Column(nullable = false)
-    private int cvv = cvvGenerator();
+    private int cvv;
 
-    @Column(name = "expiration_date", nullable = false)
+    @Column(name = "expirationDate", nullable = false)
     private LocalDateTime expirationDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "delivery_status", nullable = false)
+    @Column(name = "deliveryStatus")
     private DeliveryStatus deliveryStatus;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private CardStatus status;
 
-    public Card(Account account, CardType type) {
+    public Card(Account account, CardType cardType) {
         this.account = account;
-        this.type = type;
+        this.cardType = cardType;
     }
 
     public int cvvGenerator() {
@@ -64,9 +64,19 @@ public class Card {
             int digit = random.nextInt(10);
             sb.append(digit);
         }
+        System.out.println(Long.getLong(sb.toString()));
 
-        return Long.getLong(sb.toString());
+        return Long.parseLong(sb.toString());
 
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.expirationDate = LocalDateTime.now().plusYears(4);
+        this.deliveryStatus = DeliveryStatus.PENDING;
+        this.number = cardNumberGenerator();
+        this.cvv = cvvGenerator();
+        this.status = CardStatus.BLOCKED;
     }
 
 }

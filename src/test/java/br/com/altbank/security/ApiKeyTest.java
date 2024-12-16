@@ -10,10 +10,8 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 public class ApiKeyTest {
 
-//    @ConfigProperty(name = "altbank.api.key")
-//    String apiKey;
-String apiKey = ConfigLoader.getEnv("altbank.api.key");
-
+@ConfigProperty(name = "altbank.api.key")
+String apiKey;
 
     @Test
     @RequiresApiKey

@@ -16,6 +16,7 @@ public class AccountRepository {
     @Inject
     EntityManager entityManager;
 
+    @Transactional
     public Account save(Account account) {
         entityManager.persist(account);
         return account;
@@ -36,7 +37,7 @@ public class AccountRepository {
     public Optional<Account> findByDocument(String document) {
         return entityManager.createQuery(
                         "SELECT a FROM Account a " +
-                                "JOIN Customer c ON a.customerId = c.id " +
+                                "JOIN a.customer c " +
                                 "WHERE c.document = :document", Account.class)
                 .setParameter("document", document)
                 .getResultStream()
@@ -47,6 +48,7 @@ public class AccountRepository {
     public void cancelAccount(String document) {
         Account account = findByDocument(document).orElseThrow(() -> new NotFoundException("Account not found"));
         account.setStatus(AccountStatus.CANCELLED);
+        entityManager.merge(account);
     }
 
 }

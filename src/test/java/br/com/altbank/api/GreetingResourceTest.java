@@ -12,10 +12,8 @@ import static org.hamcrest.CoreMatchers.is;
 @QuarkusTest
 class GreetingResourceTest {
 
-//    @ConfigProperty(name = "altbank.api.key")
-//    String apiKey;
-    String apiKey = ConfigLoader.getEnv("altbank.api.key");
-
+@ConfigProperty(name = "altbank.api.key")
+String apiKey;
 
     @Test
     @RequiresApiKey

@@ -11,6 +11,7 @@ services:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./src/main/resources/import.sql:/docker-entrypoint-initdb.d/import.sql:ro
     networks:
       - altbank-network
 
@@ -26,14 +27,17 @@ services:
     depends_on:
       - mysql
     environment:
-      QUARKUS_DATASOURCE_USERNAME: root
-      QUARKUS_DATASOURCE_PASSWORD: rootpassword
-      QUARKUS_DATASOURCE_URL: jdbc:mysql://mysql:3306/altbank
+      - QUARKUS_DATASOURCE_USERNAME=root
+      - QUARKUS_DATASOURCE_PASSWORD=rootpassword
+      - QUARKUS_DATASOURCE_URL=jdbc:mysql://mysql:3306/altbank
+      - quarkus.rest-client."br.com.altbank.resources.CardResourceClient".url=http://localhost:8080
     networks:
       - altbank-network
 
+
 volumes:
   mysql-data:
+
 
 networks:
   altbank-network:
