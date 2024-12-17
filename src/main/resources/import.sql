@@ -1,3 +1,24 @@
+CREATE TABLE `address` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `street` varchar(255) NOT NULL,
+  `city` varchar(100) NOT NULL,
+  `state` varchar(100) NOT NULL,
+  `zipCode` varchar(20) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+CREATE TABLE `customer` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `createdAt` timestamp NULL DEFAULT NULL,
+  `deliveryAddressId` bigint DEFAULT NULL,
+  `document` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_delivery_address` (`deliveryAddressId`),
+  CONSTRAINT `fk_delivery_address` FOREIGN KEY (`deliveryAddressId`) REFERENCES `address` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
 CREATE TABLE `account` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `customerId` bigint NOT NULL,
@@ -8,16 +29,6 @@ CREATE TABLE `account` (
   KEY `account_ibfk_1` (`customerId`),
   CONSTRAINT `account_ibfk_1` FOREIGN KEY (`customerId`) REFERENCES `customer` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-
-CREATE TABLE `address` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `street` varchar(255) NOT NULL,
-  `city` varchar(100) NOT NULL,
-  `state` varchar(100) NOT NULL,
-  `zipCode` varchar(20) NOT NULL,
-  `country` varchar(100) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
 CREATE TABLE `card` (
   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -43,17 +54,6 @@ CREATE TABLE `cardReissueRequest` (
   KEY `fk_card` (`cardId`),
   CONSTRAINT `fk_card` FOREIGN KEY (`cardId`) REFERENCES `card` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-
-CREATE TABLE `customer` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `createdAt` timestamp NULL DEFAULT NULL,
-  `deliveryAddressId` bigint DEFAULT NULL,
-  `document` varchar(20) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_delivery_address` (`deliveryAddressId`),
-  CONSTRAINT `fk_delivery_address` FOREIGN KEY (`deliveryAddressId`) REFERENCES `address` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
 CREATE TABLE `cvvWebhookLog` (
   `id` bigint NOT NULL AUTO_INCREMENT,
